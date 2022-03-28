@@ -13,17 +13,17 @@
         </ul>
       </div>
       <div class="col-sm-6">
-        <form>
+        <div>
           <div class="mb-3 mt-3">
             <label for="time" class="form-label">Затраченное время:</label>
-            <input type="text" class="form-control" id="time" placeholder="Затраченное время" name="email"
+            <input type="number" class="form-control" id="time" placeholder="Затраченное время" name="time"
                    v-model="timeEntry.duration">
           </div>
           <Datepicker v-model="timeEntry.date" :format="dateFormat"></Datepicker>
           <label for="comment">Комментарий:</label>
-          <textarea class="form-control" rows="5" id="comment" name="text" v-model="timeEntry.comment"></textarea>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+          <textarea class="form-control" rows="5" id="comment" v-model="timeEntry.comment"></textarea>
+          <button type="submit" class="btn btn-primary" @click="track">Добавить</button>
+        </div>
       </div>
     </div>
   </div>
@@ -34,6 +34,7 @@ import 'bootstrap'
 import "bootstrap/dist/css/bootstrap.min.css";
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import httpClient from "@/httpClient";
 
 export default {
   name: "TimeTracker",
@@ -42,6 +43,7 @@ export default {
   },
   data: () => ({
     task: {
+      id: 2,
       name: 'Task',
       description: 'do this',
       square: .0,
@@ -56,9 +58,20 @@ export default {
       comment: ''
     }
   }),
-  methods: {
-    dateFormat: (date) => `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
 
+  async created() {
+    this.task = (await httpClient.get(`/task/${this.$route.params.id}`)).data
+  },
+
+  methods: {
+    dateFormat: (date) => `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`,
+    async track() {
+      try {
+        await httpClient.post(`/task/${this.task.id}/track`, this.timeEntry)
+      } catch (err) {
+        console.log(err)
+      }
+    }
 
   }
 }

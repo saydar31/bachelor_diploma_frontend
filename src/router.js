@@ -6,7 +6,7 @@ export default createRouter({
     history: createWebHistory(),
     routes: [
         {
-            path: '/track',
+            path: '/task/:id/track',
             component: TimeTracker
         },
         {
