@@ -2,7 +2,8 @@ const state = () => ({
     user: {
         state: 'ANONYMOUS',
         firstName: 'Валерий',
-        lastName: 'Жмышенко'
+        lastName: 'Жмышенко',
+        accessToken: '1'
     }
 })
 
@@ -11,7 +12,9 @@ const getters = {
 }
 
 
-const actions = {}
+const actions = {
+
+}
 
 const mutations = {}
 
