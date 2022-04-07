@@ -1,20 +1,24 @@
+import cosnts from "@/cosnts";
+
 const state = () => ({
     user: {
         state: 'ANONYMOUS',
         firstName: 'Валерий',
         lastName: 'Жмышенко',
-        accessToken: '1'
+        accessToken: '1',
+        position: 'EMPLOYEE'
     }
 })
 
 const getters = {
-    user: (state) => state.user
+    user: (state) => state.user,
+    isEmployee: (state) => state.user.position === cosnts.Position.EMPLOYEE,
+    isTeamSupervisor: (state) => state.user.position === cosnts.Position.TEAM_SUPERVISOR,
+    isProjectSupervisor: (state) => state.user.position === cosnts.Position.PROJECT_SUPERVISOR,
 }
 
 
-const actions = {
-
-}
+const actions = {}
 
 const mutations = {}
 

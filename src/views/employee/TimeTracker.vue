@@ -3,23 +3,15 @@
     <div class="row">
       <div class="col-sm-3">
         <h2>{{ task.name }}</h2>
-        <p>{{ task.description }}</p>
-        <p>Площадь помещения: {{ task.square }}</p>
-        <p>Теги</p>
-        <ul>
-          <li v-for="tag in task.properties" :key="tag.id">
-            {{ tag.name }}
-          </li>
-        </ul>
       </div>
       <div class="col-sm-6">
         <div>
           <div class="mb-3 mt-3">
             <label for="time" class="form-label">Затраченное время:</label>
             <input type="number" class="form-control" id="time" placeholder="Затраченное время" name="time"
-                   v-model="timeEntry.duration">
+                   v-model="timeEntry.time">
           </div>
-          <Datepicker v-model="timeEntry.date" :format="dateFormat"></Datepicker>
+          <Datepicker v-model="timeEntry.date" :enable-time-picker="false"></Datepicker>
           <label for="comment">Комментарий:</label>
           <textarea class="form-control" rows="5" id="comment" v-model="timeEntry.comment"></textarea>
           <button type="submit" class="btn btn-primary" @click="track">Добавить</button>
@@ -34,7 +26,7 @@ import 'bootstrap'
 import "bootstrap/dist/css/bootstrap.min.css";
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-import httpClient from "@/httpClient";
+import tasks from "@/api/tasks";
 
 export default {
   name: "TimeTracker",
@@ -53,26 +45,22 @@ export default {
       ]
     },
     timeEntry: {
-      duration: .0,
+      time: .0,
       date: new Date(),
       comment: ''
     }
   }),
 
   async created() {
-    this.task = (await httpClient.get(`/task/${this.$route.params.id}`)).data
+    this.task = await tasks.getTask(this.$route.params.id)
   },
 
   methods: {
-    dateFormat: (date) => `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`,
     async track() {
-      try {
-        await httpClient.post(`/task/${this.task.id}/track`, this.timeEntry)
-      } catch (err) {
-        console.log(err)
-      }
+      let timeEntry = Object.assign({}, this.timeEntry)
+      timeEntry.date = timeEntry.date.toISOString().substring(0, 10)
+      await tasks.track(this.task.id, timeEntry)
     }
-
   }
 }
 </script>
