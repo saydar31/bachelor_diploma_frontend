@@ -3,10 +3,22 @@ import NotFoundPage from "@/views/NotFoundPage";
 import TimeTracker from "@/views/employee/TimeTracker";
 import TaskList from "@/views/TaskList";
 import TaskPage from "@/views/TaskPage";
+import ProjectList from "@/views/projectSuperviser/ProjectList";
+import store from "@/store";
+import ProjectPage from "@/views/projectSuperviser/ProjectPage";
+import TeamList from "@/views/projectSuperviser/TeamList";
+import TeamPage from "@/views/projectSuperviser/TeamPage";
 
 export default createRouter({
     history: createWebHistory(),
     routes: [
+        //Стрвницы доступные для всех пользователей
+        {
+            name: 'project-page',
+            path: '/project/:id',
+            component: ProjectPage
+        },
+        //Страницы работника
         {
             name: 'time-tracker',
             path: '/task/:id/track',
@@ -20,6 +32,23 @@ export default createRouter({
         {
             path: '/tasks',
             component: TaskList
+        },
+        //Страницы начальника проекта
+        {
+            path: '/projects',
+            component: ProjectList,
+            beforeEnter: () => store.getters['user/isProjectSupervisor']
+        },
+        {
+            path: '/teams',
+            component: TeamList,
+            beforeEnter: () => store.getters["user/isProjectSupervisor"]
+        },
+        {
+            name: 'team-page',
+            path: '/team/:id',
+            component: TeamPage,
+            beforeEnter: () => store.getters['user/isProjectSupervisor']
         },
         {
             path: '/foo',

@@ -16,5 +16,5 @@ export default {
         let tasks = (await httpClient.get('/task')).data
         tasks.forEach(task => task.name = taskName(task))
         return tasks
-    }
+    },
 }
