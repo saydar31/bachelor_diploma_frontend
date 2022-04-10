@@ -8,6 +8,7 @@ import store from "@/store";
 import ProjectPage from "@/views/projectSuperviser/ProjectPage";
 import TeamList from "@/views/projectSuperviser/TeamList";
 import TeamPage from "@/views/projectSuperviser/TeamPage";
+import CreateTeam from "@/views/projectSuperviser/CreateTeam";
 
 export default createRouter({
     history: createWebHistory(),
@@ -48,6 +49,12 @@ export default createRouter({
             name: 'team-page',
             path: '/team/:id',
             component: TeamPage,
+            beforeEnter: () => store.getters['user/isProjectSupervisor']
+        },
+        {
+            name: 'new-team',
+            path: '/team/new',
+            component: CreateTeam,
             beforeEnter: () => store.getters['user/isProjectSupervisor']
         },
         {

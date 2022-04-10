@@ -13,12 +13,16 @@ export default {
         let response = await httpClient.get(`/team/${projectId}/members`)
         return response.data;
     },
-    async getAvailableUsers(id) {
+    getAvailableUsers: async (id) => {
         let response = await httpClient.get(`/team/${id}/availableUsers`)
         return response.data
     },
-    async save(id, data) {
+    save: async (id, data) => {
         let response = await httpClient.post(`/team/${id}`, data)
+        return response.data
+    },
+    create: async (data) => {
+        let response = await httpClient.post('/team/', data)
         return response.data
     }
 }
