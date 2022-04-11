@@ -17,4 +17,7 @@ export default {
         tasks.forEach(task => task.name = taskName(task))
         return tasks
     },
+    assign: async (id, type, assigneeId) => {
+        await httpClient.post(`/task/${id}/assign-${type}/${assigneeId}`)
+    }
 }

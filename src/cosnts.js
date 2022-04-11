@@ -4,5 +4,9 @@ export default Object.freeze({
         EMPLOYEE: 'EMPLOYEE',
         TEAM_SUPERVISOR: 'TEAM_SUPERVISOR',
         PROJECT_SUPERVISOR: 'PROJECT_SUPERVISOR'
+    },
+    AssignType: {
+        TEAM: 'team',
+        EMPLOYEE: 'employee'
     }
 })

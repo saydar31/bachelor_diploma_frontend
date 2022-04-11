@@ -9,8 +9,8 @@ export default {
         let response = await httpClient.get(`/team/${teamId}`)
         return response.data
     },
-    getTeamMembers: async (projectId) => {
-        let response = await httpClient.get(`/team/${projectId}/members`)
+    getTeamMembers: async (teamId) => {
+        let response = await httpClient.get(`/team/${teamId}/members`)
         return response.data;
     },
     getAvailableUsers: async (id) => {

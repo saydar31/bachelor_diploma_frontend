@@ -3,6 +3,9 @@
     <div class="row">
       <div class="col-sm-3">
         <h2>{{ task.name }}</h2>
+        <p>Площадь {{ task.square }}</p>
+        <p>Запланировано {{ task.estimate }}</p>
+        <p>Уже затрекано {{ task.factTime }}</p>
       </div>
       <div class="col-sm-6">
         <div>
@@ -60,6 +63,7 @@ export default {
       let timeEntry = Object.assign({}, this.timeEntry)
       timeEntry.date = timeEntry.date.toISOString().substring(0, 10)
       await tasks.track(this.task.id, timeEntry)
+      this.task = await tasks.getTask(this.$route.params.id)
     }
   }
 }
