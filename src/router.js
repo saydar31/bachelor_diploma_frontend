@@ -9,6 +9,8 @@ import ProjectPage from "@/views/projectSuperviser/ProjectPage";
 import TeamList from "@/views/projectSuperviser/TeamList";
 import TeamPage from "@/views/projectSuperviser/TeamPage";
 import CreateTeam from "@/views/projectSuperviser/CreateTeam";
+import TaskTypes from "@/views/projectSuperviser/TaskTypes";
+import TaskTypePage from "@/views/projectSuperviser/TaskTypePage";
 
 export default createRouter({
     history: createWebHistory(),
@@ -56,6 +58,17 @@ export default createRouter({
             path: '/team/new',
             component: CreateTeam,
             beforeEnter: () => store.getters['user/isProjectSupervisor']
+        },
+        {
+            name: 'task-type-list',
+            path: '/task-types',
+            component: TaskTypes
+        },
+        {
+          name: 'task-type-page',
+          path: '/task-type/:id',
+          component: TaskTypePage,
+          beforeEnter: () => store.getters['user/isProjectSupervisor']
         },
         {
             path: '/foo',

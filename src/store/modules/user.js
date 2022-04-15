@@ -5,7 +5,7 @@ const state = () => ({
         state: 'ANONYMOUS',
         firstName: 'Валерий',
         lastName: 'Жмышенко',
-        accessToken: '1',
+        accessToken: '2',
         position: cosnts.Position.EMPLOYEE
     }
 })
