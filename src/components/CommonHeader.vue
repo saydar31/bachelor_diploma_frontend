@@ -1,20 +1,29 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <img :src="require('@/assets/time_logo.png')" width="30" height="30" class="d-inline-block align-top" alt="">
-        Модуль управления ресурсами
-      </a>
-      <div class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
-           aria-expanded="false">
-          {{ user.firstName }} {{ user.lastName }}
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <li><a class="dropdown-item" href="#">Action</a></li>
-          <li><a class="dropdown-item" href="#">Another action</a></li>
-          <li><a class="dropdown-item" href="#">Something else here</a></li>
+  <nav class="navbar navbar-light navbar-expand-md py-3">
+    <div class="container"><a class="navbar-brand d-flex align-items-center" href="#">
+      <clock-icon/>
+      <span>Управление Ресурсами</span></a>
+      <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span
+          class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="navcol-1">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <router-link :to="{name:'task-list'}" class="nav-link" :class="{active: this.$route.path.includes('task')}">
+              Задачи
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link :to="{name: 'project-list'}" class="nav-link"
+                         :class="{active: this.$route.path.includes('project')}">Проекты
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link :to="{name: 'team-list'}" class="nav-link"
+                         :class="{active: this.$route.path.includes('team')}">Команды
+            </router-link>
+          </li>
         </ul>
+        <span class="navbar-text">{{ user.firstName }} {{ user.lastName }}<a href="#"><log-off-icon/></a></span>
       </div>
     </div>
   </nav>
@@ -24,9 +33,12 @@
 import 'bootstrap'
 import "bootstrap/dist/css/bootstrap.min.css";
 import {mapGetters} from 'vuex';
+import ClockIcon from "@/components/icons/ClockIcon";
+import LogOffIcon from "@/components/icons/LogOffIcon";
 
 export default {
   name: "CommonHeader",
+  components: {LogOffIcon, ClockIcon},
   computed: {
     ...mapGetters('user', {
       user: 'user'

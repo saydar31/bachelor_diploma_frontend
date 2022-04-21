@@ -25,7 +25,8 @@ export default createRouter({
         {
             name: 'time-tracker',
             path: '/task/:id/track',
-            component: TimeTracker
+            component: TimeTracker,
+            beforeEnter: () => store.getters["user/isEmployee"]
         },
         {
             name: 'task',
@@ -33,16 +34,19 @@ export default createRouter({
             component: TaskPage
         },
         {
+            name: 'task-list',
             path: '/tasks',
             component: TaskList
         },
         //Страницы начальника проекта
         {
+            name: 'project-list',
             path: '/projects',
             component: ProjectList,
             beforeEnter: () => store.getters['user/isProjectSupervisor']
         },
         {
+            name: 'team-list',
             path: '/teams',
             component: TeamList,
             beforeEnter: () => store.getters["user/isProjectSupervisor"]
