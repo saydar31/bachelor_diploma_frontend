@@ -3,9 +3,10 @@
     <div class="container"><a class="navbar-brand d-flex align-items-center" href="#">
       <clock-icon/>
       <span>Управление Ресурсами</span></a>
-      <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span
+      <button v-show="isLoggedIn" data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span
+          class="visually-hidden">Toggle navigation</span><span
           class="navbar-toggler-icon"></span></button>
-      <div class="collapse navbar-collapse" id="navcol-1">
+      <div v-show="isLoggedIn" class="collapse navbar-collapse" id="navcol-1">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
             <router-link :to="{name:'task-list'}" class="nav-link" :class="{active: this.$route.path.includes('task')}">
@@ -41,7 +42,8 @@ export default {
   components: {LogOffIcon, ClockIcon},
   computed: {
     ...mapGetters('user', {
-      user: 'user'
+      user: 'user',
+      isLoggedIn: 'isLoggedIn'
     })
   }
 }

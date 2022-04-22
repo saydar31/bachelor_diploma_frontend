@@ -1,20 +1,21 @@
-import cosnts from "@/cosnts";
+import consts from "@/cosnts";
 
 const state = () => ({
     user: {
-        state: 'ANONYMOUS',
+        state: consts.AuthState.ANONYMOUS,
         firstName: 'Валерий',
         lastName: 'Жмышенко',
         accessToken: '2',
-        position: cosnts.Position.EMPLOYEE
+        position: consts.Position.EMPLOYEE
     }
 })
 
 const getters = {
     user: (state) => state.user,
-    isEmployee: (state) => state.user.position === cosnts.Position.EMPLOYEE,
-    isTeamSupervisor: (state) => state.user.position === cosnts.Position.TEAM_SUPERVISOR,
-    isProjectSupervisor: (state) => state.user.position === cosnts.Position.PROJECT_SUPERVISOR,
+    isEmployee: (state) => state.user.position === consts.Position.EMPLOYEE,
+    isTeamSupervisor: (state) => state.user.position === consts.Position.TEAM_SUPERVISOR,
+    isProjectSupervisor: (state) => state.user.position === consts.Position.PROJECT_SUPERVISOR,
+    isLoggedIn: (state) => state.user.state === consts.AuthState.LOGGED_IN
 }
 
 

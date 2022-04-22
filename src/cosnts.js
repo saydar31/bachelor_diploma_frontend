@@ -8,5 +8,9 @@ export default Object.freeze({
     AssignType: {
         TEAM: 'team',
         EMPLOYEE: 'employee'
+    },
+    AuthState: {
+        ANONYMOUS: 'ANONYMOUS',
+        LOGGED_IN: 'LOGGED_IN'
     }
 })
