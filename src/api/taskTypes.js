@@ -13,6 +13,24 @@ export default {
     getAnomalies: async (id) => {
         let response = await httpClient.get(`/task-type/${id}/anomalies`)
         return response.data
+    },
+    getChartData: async (id) => {
+        let response = await httpClient.get(`/task-type/${id}/chart-data`)
+        let tasks = response.data
+        let estimates = tasks.map(t => ({
+            x: t.square,
+            y: t.estimate
+        }))
+        let facts = tasks.map(t => ({
+            x: t.square,
+            y: t.factTime
+        }))
+        let squares = tasks.map(t => t.square)
+        return {
+            estimates: estimates,
+            facts: facts,
+            squares: squares
+        }
     }
 
 }

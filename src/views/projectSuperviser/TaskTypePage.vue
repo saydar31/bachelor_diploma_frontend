@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-4 col-xl-4">
-        <h1>{{taskType.description}}</h1>
+        <h1>{{ taskType.description }}</h1>
         <p v-if="taskType.taskTypeProperties">Теги</p>
         <ul>
           <li v-for="prop in taskType.taskTypeProperties" :key="prop.id">{{ prop.description }}</li>
@@ -24,12 +24,12 @@
       <div class="col-lg-9 col-xl-7">
         <p>График Задач</p>
         <div>
-          <canvas
-              data-bss-chart="{&quot;type&quot;:&quot;bar&quot;,&quot;data&quot;:{&quot;labels&quot;:[&quot;January&quot;,&quot;February&quot;,&quot;March&quot;,&quot;April&quot;,&quot;May&quot;,&quot;June&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;Revenue&quot;,&quot;backgroundColor&quot;:&quot;#4e73df&quot;,&quot;borderColor&quot;:&quot;#4e73df&quot;,&quot;data&quot;:[&quot;4500&quot;,&quot;5300&quot;,&quot;6250&quot;,&quot;7800&quot;,&quot;9800&quot;,&quot;15000&quot;]}]},&quot;options&quot;:{&quot;maintainAspectRatio&quot;:true,&quot;legend&quot;:{&quot;display&quot;:false,&quot;labels&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}},&quot;title&quot;:{&quot;fontStyle&quot;:&quot;bold&quot;},&quot;scales&quot;:{&quot;xAxes&quot;:[{&quot;ticks&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}}],&quot;yAxes&quot;:[{&quot;ticks&quot;:{&quot;fontStyle&quot;:&quot;normal&quot;}}]}}}"></canvas>
+          <canvas id="chart"></canvas>
         </div>
         <p>Аномалии:</p>
         <ul class="list-group">
-          <li v-for="anomaly in anomalies" :key="anomaly.id" class="list-group-item"><a href="#">{{anomaly.name}}</a></li>
+          <li v-for="anomaly in anomalies" :key="anomaly.id" class="list-group-item"><a href="#">{{ anomaly.name }}</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -38,11 +38,14 @@
 
 <script>
 import taskTypes from "@/api/taskTypes";
+import {Chart, registerables} from 'chart.js'
+
+Chart.register(...registerables)
 
 export default {
   name: "TaskTypePage",
   data: () => ({
-    taskType:{
+    taskType: {
       description: '...',
       constantBias: .0,
       manHourPerSquareMeter: .0,
@@ -51,12 +54,43 @@ export default {
       lastParamsUpdate: new Date()
     },
     anomalies: [],
+    estimates: [],
+    facts: [],
     showTaskChanges: true
   }),
   async created() {
     this.taskType = await taskTypes.getTaskType(this.$route.params.id)
     this.anomalies = await taskTypes.getAnomalies(this.$route.params.id)
-    
+    let {facts, estimates, squares} = await taskTypes.getChartData(this.$route.params.id)
+    console.log(facts)
+    console.log(estimates)
+    let ctx = document.getElementById('chart').getContext('2d')
+    new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: squares,
+            datasets: [
+              {
+                label: 'Запланировано',
+                data: estimates,
+                backgroundColor: '#86c658'
+              },
+              {
+                label: 'Фактически потрачено',
+                data: facts,
+                backgroundColor: '#36a2eb'
+              }
+            ]
+          },
+          options: {
+            scales: {
+              x: {
+                beginAtZero: true
+              }
+            }
+          }
+        }
+    )
   },
   methods: {
     async confirmParamsChange() {
