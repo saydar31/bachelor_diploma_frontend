@@ -9,6 +9,10 @@ export default {
         let response = await httpClient.get(`/task-type/${id}`)
         return response.data
     },
-    confirmParamsChange: (id) => httpClient.post(`/task-type/${id}/confirm`)
+    confirmParamsChange: async (id) => httpClient.post(`/task-type/${id}/confirm`),
+    getAnomalies: async (id) => {
+        let response = await httpClient.get(`/task-type/${id}/anomalies`)
+        return response.data
+    }
 
 }

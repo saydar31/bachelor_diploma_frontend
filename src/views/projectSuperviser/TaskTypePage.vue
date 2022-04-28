@@ -1,42 +1,21 @@
 <template>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-3">
-      <p>Описание: {{taskType.description}}</p>
-    </div>
-    <div class="col-sm-8">
-      <p>Параметры вычисления оцнеки трудозатрат в зависимости от площади помещения</p>
-      <p>Постоянные трудозатраты: {{taskType.constantBias}}</p>
-      <p>Человеко-часы за метр квадратный: {{ taskType.manHourPerSquareMeter }}</p>
-      <div v-if="taskType.constantBiasDraft && taskType.manHourPerSquareMeterDraft">
-        <p>Изменились параметры для расчета оценки. Дата изменения: {{ taskType.lastParamsUpdate }}</p>
-        <p>Постоянные трудозатраты: {{ taskType.constantBiasDraft }}</p>
-        <p>Человеко-часы за метр квадратный: {{ taskType.manHourPerSquareMeterDraft }}</p>
-        <button @click="confirmParamsChange">применить изменения параметров</button>
-      </div>
-    </div>
-  </div>
-</div>
   <div class="container">
     <div class="row">
       <div class="col-lg-4 col-xl-4">
-        <h1>TaskType</h1>
-        <p>Теги</p>
+        <h1>{{taskType.description}}</h1>
+        <p v-if="taskType.taskTypeProperties">Теги</p>
         <ul>
-          <li>Жилой Дом</li>
-          <li>Сантехника</li>
-          <li>Item 3</li>
-          <li>Item 4</li>
+          <li v-for="prop in taskType.taskTypeProperties" :key="prop.id">{{ prop.description }}</li>
         </ul>
         <p>Параметры оценки задач</p>
         <p>Человеко-часы за метр квадратный: {{ taskType.manHourPerSquareMeter }}</p>
         <p>Постоянные трудозатраты: {{ taskType.constantBias }}<br></p>
-        <div>
+        <div v-if="showTaskChanges">
           <p>Обновление параметров:</p>
           <p>Человеко-часы за метр квадратный: {{ taskType.manHourPerSquareMeterDraft }}</p>
           <p>Постоянные трудозатраты: {{ taskType.constantBiasDraft }}<br></p>
           <button @click="confirmParamsChange" class="btn btn-primary" type="button">Применить</button>
-          <button class="btn btn-primary" type="button"
+          <button @click="showTaskChanges = false" class="btn btn-primary" type="button"
                   style="--bs-secondary: #6c757d;--bs-secondary-rgb: 108,117,125;margin-right: 1px;margin-left: 6px;background: var(--bs-gray);">
             Откланить
           </button>
@@ -50,9 +29,7 @@
         </div>
         <p>Аномалии:</p>
         <ul class="list-group">
-          <li class="list-group-item"><a href="#">Аномалия</a></li>
-          <li class="list-group-item"><span>List Group Item 2</span></li>
-          <li class="list-group-item"><span>List Group Item 3</span></li>
+          <li v-for="anomaly in anomalies" :key="anomaly.id" class="list-group-item"><a href="#">{{anomaly.name}}</a></li>
         </ul>
       </div>
     </div>
@@ -72,10 +49,14 @@ export default {
       constantBiasDraft: .0,
       manHourPerSquareMeterDraft: .0,
       lastParamsUpdate: new Date()
-    }
+    },
+    anomalies: [],
+    showTaskChanges: true
   }),
   async created() {
     this.taskType = await taskTypes.getTaskType(this.$route.params.id)
+    this.anomalies = await taskTypes.getAnomalies(this.$route.params.id)
+    
   },
   methods: {
     async confirmParamsChange() {
