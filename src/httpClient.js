@@ -7,7 +7,7 @@ const client = axios.create({
 })
 client.interceptors.request.use(
     (config) => {
-        let token = store.getters["user/user"].accessToken
+        let token = store.getters["user/accessToken"]
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`
         } else {

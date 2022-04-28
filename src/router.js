@@ -11,11 +11,17 @@ import TeamPage from "@/views/projectSuperviser/TeamPage";
 import CreateTeam from "@/views/projectSuperviser/CreateTeam";
 import TaskTypes from "@/views/projectSuperviser/TaskTypes";
 import TaskTypePage from "@/views/projectSuperviser/TaskTypePage";
+import LoginPage from "@/views/LoginPage";
 
 export default createRouter({
     history: createWebHistory(),
     routes: [
-        //Стрвницы доступные для всех пользователей
+        //Страницы доступные для всех пользователей
+        {
+            name: 'login',
+            path: '/login',
+            component: LoginPage
+        },
         {
             name: 'project-page',
             path: '/project/:id',
