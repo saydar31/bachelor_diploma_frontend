@@ -1,24 +1,43 @@
 <template>
-  <div class="container-fluid">
+  <div class="container">
     <div class="row">
-      <div class="col-sm-3">
-        <h2>{{ task.name }}</h2>
-        <p>Площадь {{ task.square }}</p>
-        <p>Запланировано {{ task.estimate }}</p>
-        <p>Уже затрекано {{ task.factTime }}</p>
+      <div class="col">
+        <h1>Задача</h1>
       </div>
-      <div class="col-sm-6">
-        <div>
-          <div class="mb-3 mt-3">
-            <label for="time" class="form-label">Затраченное время:</label>
-            <input type="number" class="form-control" id="time" placeholder="Затраченное время" name="time"
-                   v-model="timeEntry.time">
+    </div>
+    <div class="row">
+      <div class="col-lg-2">
+        <p>{{ task.name }}</p>
+        <p>Площадь: {{ task.square }}</p>
+        <p>Тип задачи: {{ task.type.description }}</p>
+        <p>Теги</p>
+        <ul class="list-group">
+          <li v-for="prop in task.properties" :key="prop.name" class="list-group-item"><span>{{ prop.name }}</span></li>
+        </ul>
+      </div>
+      <div class="col">
+        <div class="progress">
+          <div class="progress-bar" :class="{'bg-danger': factPercent > 100}" aria-valuenow="50" aria-valuemin="0"
+               aria-valuemax="100"
+               :style="{width: Math.min(100, factPercent) + '%'}">
+            {{ factPercent }}%
           </div>
-          <Datepicker v-model="timeEntry.date" :enable-time-picker="false"></Datepicker>
-          <label for="comment">Комментарий:</label>
-          <textarea class="form-control" rows="5" id="comment" v-model="timeEntry.comment"></textarea>
-          <button type="submit" class="btn btn-primary" @click="track">Добавить</button>
         </div>
+        <p>Предполагаемое количество часов: {{ task.estimate }}</p>
+        <p>Фактически затрачено: {{ task.factTime }}&nbsp;</p>
+        <form>
+          <p><label class="form-label">Часы<input v-model="timeEntry.time" class="form-control" type="number"></label>
+          </p>
+          <p><label class="form-label">Дата
+            <Datepicker v-model="timeEntry.date" :enable-time-picker="false"/>
+          </label></p>
+          <p><label class="form-label">Комментарий<textarea v-model="timeEntry.comment" class="form-control"></textarea></label>
+          </p>
+          <button class="btn btn-primary" type="button" @click.prevent="track">Добавить</button>
+          <button class="btn btn-primary" type="button"
+                  style="padding-right: 12px;margin-left: 6px;background: var(--bs-gray);">Отменить
+          </button>
+        </form>
       </div>
     </div>
   </div>
@@ -53,6 +72,11 @@ export default {
       comment: ''
     }
   }),
+  computed: {
+    factPercent() {
+      return Math.round(this.task.factTime / this.task.estimate * 100 * 100) / 100
+    }
+  },
 
   async created() {
     this.task = await tasks.getTask(this.$route.params.id)
