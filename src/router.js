@@ -32,7 +32,7 @@ export default createRouter({
             name: 'time-tracker',
             path: '/task/:id/track',
             component: TimeTracker,
-            beforeEnter: () => store.getters["user/isEmployee"]
+           // beforeEnter: () => store.getters["user/isEmployee"]
         },
         {
             name: 'task',

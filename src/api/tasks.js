@@ -10,6 +10,9 @@ export default {
         return task
     },
     track: async (id, timeEntry) => {
+        timeEntry.time = timeEntry.minutes / 60 + timeEntry.hours
+        delete timeEntry.hours
+        delete timeEntry.minutes
         await httpClient.post(`/task/${id}/track`, timeEntry)
     },
     getTasks: async () => {

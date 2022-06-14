@@ -32,7 +32,8 @@ const actions = {
     getMe: async ({commit}) => {
         let response = await httpClient.get('/user/me')
         commit('SET_USER', response.data)
-    }
+    },
+    foo: (s) => s
 }
 
 const mutations = {

@@ -8,12 +8,8 @@
     <div class="row">
       <div class="col-lg-2">
         <p>{{ task.name }}</p>
-        <p>Площадь: {{ task.square }}</p>
+        <p>Основной показатель: {{ task.square }}</p>
         <p>Тип задачи: {{ task.type.description }}</p>
-        <p>Теги</p>
-        <ul class="list-group">
-          <li v-for="prop in task.properties" :key="prop.name" class="list-group-item"><span>{{ prop.name }}</span></li>
-        </ul>
       </div>
       <div class="col">
         <div class="progress">
@@ -26,7 +22,17 @@
         <p>Предполагаемое количество часов: {{ task.estimate }}</p>
         <p>Фактически затрачено: {{ task.factTime }}&nbsp;</p>
         <form>
-          <p><label class="form-label">Часы<input v-model="timeEntry.time" class="form-control" type="number"></label>
+          <p>
+            <label class="form-label">Часы
+              <input v-model="timeEntry.hours" min="0" class="form-control" type="number">
+            </label>
+            <label class="form-label" style="margin-left: 8px;">Минуты
+              <input v-model="timeEntry.minutes" min="0" class="form-control" type="number">
+            </label>
+            <button @click.prevent="startTimer" :disabled="timerIsStarted(task.id)" class="btn btn-primary"
+                    type="button" style="margin-left: 8px;margin-bottom: 6px;">
+              запустить таймер
+            </button>
           </p>
           <p><label class="form-label">Дата
             <Datepicker v-model="timeEntry.date" :enable-time-picker="false"/>
@@ -49,6 +55,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import tasks from "@/api/tasks";
+import {mapGetters} from "vuex";
 
 export default {
   name: "TimeTracker",
@@ -58,16 +65,18 @@ export default {
   data: () => ({
     task: {
       id: 2,
-      name: 'Task',
-      description: 'do this',
-      square: .0,
-      properties: [
-        {id: 1, name: 'Электрика'},
-        {id: 2, name: 'Жилой дом'},
-      ]
+      name: 'Пояснительная записка',
+      description: 'Составить пояснительную записку для проекта Трасса-60',
+      square: 14,
+      estimate: 7,
+      factTime: 2,
+      type: {
+        description: 'Пояснительная записка для скоростной магистрали'
+      }
     },
     timeEntry: {
-      time: .0,
+      hours: 0,
+      minutes: 0,
       date: new Date(),
       comment: ''
     }
@@ -75,11 +84,20 @@ export default {
   computed: {
     factPercent() {
       return Math.round(this.task.factTime / this.task.estimate * 100 * 100) / 100
-    }
+    },
+    ...mapGetters('task', ['timerIsStarted', 'getTimeById'])
   },
 
   async created() {
-    this.task = await tasks.getTask(this.$route.params.id)
+    try {
+      this.task = await tasks.getTask(this.$route.params.id)
+    } catch (e) {
+      console.log(e)
+    }
+    let {hours, minutes} = this.getTimeById(this.task.id)
+    this.timeEntry.hours = hours
+    this.timeEntry.minutes = minutes
+    console.log(this.timeEntry)
   },
 
   methods: {
@@ -88,6 +106,20 @@ export default {
       timeEntry.date = timeEntry.date.toISOString().substring(0, 10)
       await tasks.track(this.task.id, timeEntry)
       this.task = await tasks.getTask(this.$route.params.id)
+    },
+    startTimer() {
+      let te = this.timeEntry
+      setInterval(() => {
+        let m = te.minutes + 1
+        let h = te.hours
+        if (m === 60) {
+          h = h + 1
+          m = 0
+        }
+        te.hours = h
+        te.minutes = m
+      }, 60 * 1000)
+      this.$store.commit('task/START_TIMER', this.task.id)
     }
   }
 }
