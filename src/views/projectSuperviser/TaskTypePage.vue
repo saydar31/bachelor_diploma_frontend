@@ -3,14 +3,10 @@
     <div class="row">
       <div class="col-lg-4 col-xl-4">
         <h1>{{ taskType.description }}</h1>
-        <p v-if="taskType.taskTypeProperties">Теги</p>
-        <ul>
-          <li v-for="prop in taskType.taskTypeProperties" :key="prop.id">{{ prop.description }}</li>
-        </ul>
         <p>Параметры оценки задач</p>
-        <p>Человеко-часы за метр квадратный: {{ taskType.manHourPerSquareMeter }}</p>
-        <p>Постоянные трудозатраты: {{ taskType.constantBias }}<br></p>
-        <div v-if="showTaskChanges">
+        <p>Человеко-часы за единицу измерения: {{ taskType.coefficients.manHourPerUnit }}</p>
+        <p>Постоянные трудозатраты: {{ taskType.coefficients.constantBias }}<br></p>
+        <div v-if="taskType.coefficientsDraft">
           <p>Обновление параметров:</p>
           <p>Человеко-часы за метр квадратный: {{ taskType.manHourPerSquareMeterDraft }}</p>
           <p>Постоянные трудозатраты: {{ taskType.constantBiasDraft }}<br></p>
@@ -56,7 +52,6 @@ export default {
     anomalies: [],
     estimates: [],
     facts: [],
-    showTaskChanges: true
   }),
   async created() {
     this.taskType = await taskTypes.getTaskType(this.$route.params.id)
@@ -66,15 +61,17 @@ export default {
     console.log(estimates)
     let ctx = document.getElementById('chart').getContext('2d')
     new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: squares,
-            datasets: [
-              {
-                label: 'Запланировано',
-                data: estimates,
-                backgroundColor: '#86c658'
-              },
+      type: 'scatter',
+      data: {
+        labels: squares,
+        datasets: [
+          {
+            label: 'Запланировано',
+            data: estimates,
+            backgroundColor: '#86c658',
+            showLine: true,
+            borderColor: '#86c658'
+          },
               {
                 label: 'Фактически потрачено',
                 data: facts,

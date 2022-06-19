@@ -18,14 +18,14 @@ export default {
         let response = await httpClient.get(`/task-type/${id}/chart-data`)
         let tasks = response.data
         let estimates = tasks.map(t => ({
-            x: t.square,
+            x: t.unitValue,
             y: t.estimate
         }))
         let facts = tasks.map(t => ({
-            x: t.square,
+            x: t.unitValue,
             y: t.factTime
         }))
-        let squares = tasks.map(t => t.square)
+        let squares = tasks.map(t => t.unitValue)
         return {
             estimates: estimates,
             facts: facts,

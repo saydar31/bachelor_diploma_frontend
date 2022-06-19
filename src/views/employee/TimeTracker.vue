@@ -8,8 +8,14 @@
     <div class="row">
       <div class="col-lg-2">
         <p>{{ task.name }}</p>
-        <p>Основной показатель: {{ task.square }}</p>
+        <p>Основной показатель: {{ task.unitValue }}</p>
         <p>Тип задачи: {{ task.type.description }}</p>
+        <p>
+          <button @click.prevent="closeTask()" class="btn btn-primary"
+                  type="button" style="margin-left: 8px;margin-bottom: 6px;">
+            Закрыть
+          </button>
+        </p>
       </div>
       <div class="col">
         <div class="progress">
@@ -19,8 +25,8 @@
             {{ factPercent }}%
           </div>
         </div>
-        <p>Предполагаемое количество часов: {{ task.estimate }}</p>
-        <p>Фактически затрачено: {{ task.factTime }}&nbsp;</p>
+        <p>Предполагаемое количество часов: {{ task.estimate.toFixed(2) }}</p>
+        <p>Фактически затрачено: {{ task.factTime.toFixed(2) }}&nbsp;</p>
         <form>
           <p>
             <label class="form-label">Часы
@@ -29,9 +35,9 @@
             <label class="form-label" style="margin-left: 8px;">Минуты
               <input v-model="timeEntry.minutes" min="0" class="form-control" type="number">
             </label>
-            <button @click.prevent="startTimer" :disabled="timerIsStarted(task.id)" class="btn btn-primary"
+            <button @click.prevent="toggleTimer" class="btn btn-primary"
                     type="button" style="margin-left: 8px;margin-bottom: 6px;">
-              запустить таймер
+              {{ timerIsStarted(task.id) ? 'остановить таймер' : 'запустить таймер' }}
             </button>
           </p>
           <p><label class="form-label">Дата
@@ -40,10 +46,17 @@
           <p><label class="form-label">Комментарий<textarea v-model="timeEntry.comment" class="form-control"></textarea></label>
           </p>
           <button class="btn btn-primary" type="button" @click.prevent="track">Добавить</button>
-          <button class="btn btn-primary" type="button"
-                  style="padding-right: 12px;margin-left: 6px;background: var(--bs-gray);">Отменить
-          </button>
         </form>
+        <p v-if="timeEntries.length">Предыдущие трудозатраты</p>
+        <div class="list-group">
+          <div v-for="te in timeEntries" :key="te.id" href="#" class="list-group-item ">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{ te.time.toFixed(2) }} часов</h5>
+              <small>{{ te.date }}</small>
+            </div>
+            <p class="mb-1">{{ te.comment }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -67,7 +80,7 @@ export default {
       id: 2,
       name: 'Пояснительная записка',
       description: 'Составить пояснительную записку для проекта Трасса-60',
-      square: 14,
+      unitValue: 14,
       estimate: 7,
       factTime: 2,
       type: {
@@ -79,7 +92,9 @@ export default {
       minutes: 0,
       date: new Date(),
       comment: ''
-    }
+    },
+    timeEntries: [],
+    timer: {}
   }),
   computed: {
     factPercent() {
@@ -91,13 +106,13 @@ export default {
   async created() {
     try {
       this.task = await tasks.getTask(this.$route.params.id)
+      this.timeEntries = await tasks.getEntries(this.task.id)
     } catch (e) {
       console.log(e)
     }
     let {hours, minutes} = this.getTimeById(this.task.id)
     this.timeEntry.hours = hours
     this.timeEntry.minutes = minutes
-    console.log(this.timeEntry)
   },
 
   methods: {
@@ -107,19 +122,28 @@ export default {
       await tasks.track(this.task.id, timeEntry)
       this.task = await tasks.getTask(this.$route.params.id)
     },
-    startTimer() {
-      let te = this.timeEntry
-      setInterval(() => {
-        let m = te.minutes + 1
-        let h = te.hours
-        if (m === 60) {
-          h = h + 1
-          m = 0
-        }
-        te.hours = h
-        te.minutes = m
-      }, 60 * 1000)
-      this.$store.commit('task/START_TIMER', this.task.id)
+    async closeTask() {
+      await tasks.close(this.task.id)
+      await this.$router.push({path: '/tasks'})
+    },
+    toggleTimer() {
+      if (!this.timerIsStarted((this.task.id))) {
+        let te = this.timeEntry
+        this.timer = setInterval(() => {
+          let m = te.minutes + 1
+          let h = te.hours
+          if (m === 60) {
+            h = h + 1
+            m = 0
+          }
+          te.hours = h
+          te.minutes = m
+        }, 60 * 1000)
+        this.$store.commit('task/START_TIMER', this.task.id)
+      } else {
+        clearInterval(this.timer)
+        this.$store.commit('task/STOP_TIMER', this.task.id)
+      }
     }
   }
 }

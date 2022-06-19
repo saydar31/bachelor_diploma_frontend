@@ -22,5 +22,25 @@ export default {
     },
     assign: async (id, type, assigneeId) => {
         await httpClient.post(`/task/${id}/assign-${type}/${assigneeId}`)
-    }
+    },
+    create: async (task) => {
+        await httpClient.post('/task', task)
+    },
+    getClosedTasks: async () => {
+        let response = await httpClient.get('/task?closed')
+        return response.data;
+    },
+    distribute: async (idList, deadline) => {
+        let response = await httpClient.post('/task/distribute', {
+            taskIdList: idList,
+            deadline: deadline
+        })
+        return response.data
+    },
+    getEntries: async (id) => {
+        let response = await httpClient.get(`/task/${id}/timeEntries`)
+        return response.data
+    },
+    close: async (id) => await httpClient.post(`/task/${id}/close`)
+
 }

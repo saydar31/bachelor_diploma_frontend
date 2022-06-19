@@ -12,6 +12,7 @@ import CreateTeam from "@/views/projectSuperviser/CreateTeam";
 import TaskTypes from "@/views/projectSuperviser/TaskTypes";
 import TaskTypePage from "@/views/projectSuperviser/TaskTypePage";
 import LoginPage from "@/views/LoginPage";
+import TaskForm from "@/views/projectSuperviser/TaskForm"
 
 export default createRouter({
     history: createWebHistory(),
@@ -50,6 +51,11 @@ export default createRouter({
             path: '/projects',
             component: ProjectList,
             beforeEnter: () => store.getters['user/isProjectSupervisor']
+        },
+        {
+            name: 'task-form',
+            path: '/new/task',
+            component: TaskForm
         },
         {
             name: 'team-list',

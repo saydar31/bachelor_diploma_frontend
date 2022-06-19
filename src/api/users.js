@@ -8,5 +8,9 @@ export default {
     getTeamSupervisors: async () => {
         let response = await httpClient.get('/user/team-supervisors')
         return response.data
+    },
+    getGrades: async () => {
+        let response = await httpClient.get('/grade')
+        return response.data
     }
 }
