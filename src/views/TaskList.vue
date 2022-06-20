@@ -6,6 +6,9 @@
                                                     href="#tab-1">Открытые</a></li>
         <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-bs-toggle="tab" href="#tab-2">Закрытые</a>
         </li>
+        <li v-if="isProjectSupervisor" class="nav-item">
+          <router-link class="nav-link" :to="{path: '/new/task'}">Новая задача</router-link>
+        </li>
       </ul>
       <div class="tab-content">
         <div class="tab-pane active" role="tabpanel" id="tab-1">
@@ -26,12 +29,13 @@
                 <td>{{ task.project.name }}</td>
                 <td>
                   {{ task.description }}
-                  <span v-if="!task.assignee"> <input class="form-check-input" type="checkbox" v-model="task.selected"
+                  <span v-if="!task.assignee"><br> <input class="form-check-input" type="checkbox"
+                                                          v-model="task.selected"
                   > распределить</span>
                 </td>
                 <td>{{ task.type.description }}</td>
                 <td>{{ !task.assignee ? 'Не назначено' : `${task.assignee.firstName} ${task.assignee.lastName}` }}</td>
-                <td>{{ task.estimate.toFixed(2) }}</td>
+                <td>{{ task.estimate === 0 ? 'Не оценено' : task.estimate.toFixed(2) }}</td>
                 <td>{{ task.factTime.toFixed(2) }}
                   <router-link :to="{name: 'time-tracker', params:{id: task.id}}" v-show="isEmployee">Внести
                     трудозатраты
@@ -115,7 +119,10 @@ export default {
       let taskIdList = this.selectedTasks.map(e => e.id)
       let distributedTasks = await tasks.distribute(taskIdList, this.deadline)
       for (const distributedTask of distributedTasks) {
-        this.tasks.find(e => e.id === distributedTask.id).assignee = distributedTask.assignee
+        let task = this.tasks.find(e => e.id === distributedTask.id)
+        task.assignee = distributedTask.assignee
+        task.estimate = distributedTask.estimate
+        task.selected = false
       }
     }
   }

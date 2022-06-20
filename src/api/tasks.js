@@ -24,7 +24,9 @@ export default {
         await httpClient.post(`/task/${id}/assign-${type}/${assigneeId}`)
     },
     create: async (task) => {
-        await httpClient.post('/task', task)
+        let body = Object.assign({}, task)
+        body.description = task.project.name + '-' + task.type.description
+        await httpClient.post('/task', body)
     },
     getClosedTasks: async () => {
         let response = await httpClient.get('/task?closed')

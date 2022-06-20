@@ -41,7 +41,7 @@
             </button>
           </p>
           <p><label class="form-label">Дата
-            <Datepicker v-model="timeEntry.date" :enable-time-picker="false"/>
+            <Datepicker v-model="timeEntry.date" :max-date="new Date()" :enable-time-picker="false"/>
           </label></p>
           <p><label class="form-label">Комментарий<textarea v-model="timeEntry.comment" class="form-control"></textarea></label>
           </p>
